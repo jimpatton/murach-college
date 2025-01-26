@@ -48,3 +48,55 @@ SELECT LastName, FirstName, EnrollmentDate, GraduationDate
 -- EXERCISE 10 - return FullTimeCose, PerUnitCost, Units(12), TotalPerUnitCost, TotalTuition from Tuition
 SELECT  FullTimeCost, PerUnitCost, 12 AS Units, (PerUnitCost * 12) AS TotalPerUnitCost, (FullTimeCost + (PerUnitCost * 12)) AS TotalTuition
   From Tuition;
+
+--CHAPTER 4
+--EXERCISE 1 - return DepartmentName, CourseNumber, CourseDescription from Courses and Departments - sort by CourseNumber then DepartmentName ascending
+Select DepartmentName, CourseNumber, CourseDescription
+  FROM Departments D
+  JOIN Courses C ON d.DepartmentID = c.DepartmentID
+  ORDER BY DepartmentName, CourseNumber;
+
+--EXERCISE 2 - return LastName, FirstName, CourseNumber, CourseDescription
+SELECT LastName, FirstName, CourseNumber, CourseDescription
+  FROM Instructors I
+  JOIN Courses C on I.DepartmentID = C.DepartmentID
+  WHERE I.Status LIKE '[P]%'
+  ORDER BY LastName, FirstName;
+
+--EXERCISE 3_ return DepartmentName, CourseDescription, FirstName, LastName -  from Departments, Courses, & Instructors - only courses with 3 units - sort by Dept then Course
+SELECT DepartmentName, CourseDescription, FirstName, LastName
+  FROM Departments D
+  JOIN Courses C ON D.DepartmentID = C.DepartmentID
+  JOIN Instructors I on C.InstructorID = C.InstructorID
+  WHERE CourseUnits = 3
+  ORDER BY DepartmentName, CourseDescription;
+   
+--EXERCISE 4 - return DepartmentName, CourseDescription, LastName, FirstName - in English dept - from Departments, Courses, Instructors - sort by CourseDescription
+SELECT *
+  FROM Courses C
+  JOIN Departments D ON C.DepartmentID = D.DepartmentID
+  JOIN Instructors I ON C.DepartmentID = I.DepartmentID
+  WHERE DepartmentName = 'ENGLISH'
+  ORDER BY CourseDescription;
+  
+--EXERCISE 5 - return LastName, FirstName, CourseDescription from Intructors and Courses - sort by last/ first
+SELECT LastName, FirstName, CourseDescription
+  FROM Instructors I
+  Join Courses C ON I.InstructorID = C.InstructorID
+  WHERE CourseUnits >= 0
+  ORDER BY LastName, FirstName;
+
+--EXERCISE 6 - Skipped due to Union
+
+--EXERCISE 7 - return DepartmentName, CourseID - return depts with no courses - from Departments and Courses - outer join
+SELECT DepartmentName, CourseID
+  From Departments D
+  LEFT JOIN Courses C ON D.DepartmentID = c.DepartmentID
+  Where CourseID IS NULL;
+
+--EXERCISE 8 - return InstructorDepartment, LastName, FirstName, CourseDescription, CourseDept - from Departments, Instructors, Courses - 1 row for each course where instr dept differs from course dept
+SELECT DepartmentName AS InstructorDept, LastName, FirstName, CourseDescription, DepartmentName AS CourseDept
+  FROM Departments D
+  JOIN Instructors I ON D.DepartmentID = I.DepartmentID
+  JOIN Courses C ON I.InstructorID = C.InstructorID
+  Where InstructorDept != CourseDept;
