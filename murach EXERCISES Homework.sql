@@ -94,9 +94,28 @@ SELECT DepartmentName, CourseID
   LEFT JOIN Courses C ON D.DepartmentID = c.DepartmentID
   Where CourseID IS NULL;
 
---EXERCISE 8 - return InstructorDepartment, LastName, FirstName, CourseDescription, CourseDept - from Departments, Instructors, Courses - 1 row for each course where instr dept differs from course dept
+--EXERCISE 8 - return InstructorDepartment, LastName, FirstName, CourseDescription, CourseDept 
+-- from Departments, Instructors, Courses 
+-- 1 row for each course where instr dept differs from course dept
+-- Tables: Departments (8), Instructors (16), Courses (25)
+-- Courses -> Departments, Courses->Instructor, Instructors -> Deptartments
 SELECT DepartmentName AS InstructorDept, LastName, FirstName, CourseDescription, DepartmentName AS CourseDept
   FROM Departments D
   JOIN Instructors I ON D.DepartmentID = I.DepartmentID
   JOIN Courses C ON I.InstructorID = C.InstructorID
   Where InstructorDept != CourseDept;
+
+--IN CLASS SOLUTION
+SELECT CourseDescription, D1.DepartmentName AS CourseDept, D2.DepartmentName AS InstructorDept,
+       LastName + ', ' + FirstName AS InstructorName
+  FROM Courses C
+  JOIN Departments D1 ON C.DepartmentID = D1.DepartmentID
+  JOIN Instructors I ON C.InstructorID = I.InstructorID
+  JOIN Departments D2 ON I.DepartmentID = D2.DepartmentID
+  WHERE D1.DepartmentID != D2.DepartmentID;
+
+  --OUTER JOIN EXAMPLE Any instructors who aren't assigned a course? 
+ SELECT LastName + ', ' + FirstName AS InstructorName, CourseDescription
+   FROM Instructors I
+   LEFT JOIN Courses C ON I.InstructorID = C.InstructorID
+   WHERE CourseDescription IS NULL;
