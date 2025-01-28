@@ -119,3 +119,63 @@ SELECT CourseDescription, D1.DepartmentName AS CourseDept, D2.DepartmentName AS 
    FROM Instructors I
    LEFT JOIN Courses C ON I.InstructorID = C.InstructorID
    WHERE CourseDescription IS NULL;
+
+
+--CHAPTER 5
+--EXERCISE 1 return count of number of instructors and average salary
+-- for fulltime instructors
+SELECT Count(*) AS NumberOfInstructors, 
+       AVG(AnnualSalary) AS AvgSalary
+  FROM Instructors
+  WHERE Status LIKE '[F]%';
+
+--EXERCISE 2  return Department name, NumberOfInstructors, HighestPaid, sort descending
+SELECT DepartmentName, COUNT(*) AS NumberofInstructors, MAX(AnnualSalary) AS HighestPaid
+  FROM Instructors I
+  JOIN Departments D ON D.DepartmentID = I.DepartmentID
+  GROUP BY DepartmentName
+  ORDER BY NumberofInstructors DESC;
+
+--EXERCISE 3 - return intructor's full name(First Last), Number of courses for each instructor, sum of course units for each instructor
+--sort in descending order by course units
+SELECT (FirstName + ' ' + LastName) AS InstructorName, COUNT(*) AS InstructorCourses, SUM(CourseUnits) AS CourseUnits
+  FROM Instructors I
+  JOIN Courses C ON I.InstructorID = C.InstructorID
+  GROUP BY (FirstName + ' ' + LastName)
+  ORDER BY CourseUnits DESC;
+
+--EXERCISE 4 - return 1 row for each couse that has student enrolled
+--DepartmentName CourseDescription, #of students in course
+SELECT DepartmentName, CourseDescription, COUNT(*) Enrollment
+  FROM Departments D
+  JOIN Courses C on D.DepartmentID = c.DepartmentID
+  JOIN StudentCourses S ON C.CourseID = S.CourseID
+  GROUP BY DepartmentName, CourseDescription
+  ORDER BY DepartmentName, Enrollment;
+
+--EXERCISE 5 - return one row for each student that has courses
+-- StudentID, sum of course units - descending by total course units
+SELECT S.StudentID, SUM(CourseUnits) AS StudentUnits
+  FROM Students S
+  JOIN StudentCourses SC ON S.StudentID = SC.StudentID
+  JOIN Courses C ON SC.CourseID = C.CourseID
+  GROUP BY s.StudentID
+  ORDER BY StudentUnits DESC;
+
+--EXERCISE 6 - Modify the solution to exercise 5 so it only includes students who haven’t graduated 
+--and who are taking more than nine units.SELECT S.StudentID, SUM(CourseUnits) AS StudentUnits
+  FROM Students S
+  JOIN StudentCourses SC ON S.StudentID = SC.StudentID
+  JOIN Courses C ON SC.CourseID = C.CourseID
+  WHERE S.GraduationDate IS NULL
+  GROUP BY s.StudentID
+  HAVING SUM(CourseUnits) >9 
+  ORDER BY StudentUnits DESC;
+
+ --EXERCISE 7 -  What is the total number of courses taught by part-time instructors only?
+ -- return (LastName,FirstName), total courses by each instructor
+ SELECT (LastName + ', ' + FirstName) AS InstructorName, Count(*) as TotalCourses
+   FROM Instructors I
+   JOIN Courses C ON I.InstructorID = c.InstructorID
+   WHERE Status LIKE '[P]%'
+   GROUP BY ROLLUP(LastName + ', ' + FirstName);
