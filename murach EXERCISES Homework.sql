@@ -180,3 +180,14 @@ SELECT S.StudentID, SUM(CourseUnits) AS StudentUnits
    JOIN Courses C ON I.InstructorID = c.InstructorID
    WHERE Status LIKE '[P]%'
    GROUP BY ROLLUP(LastName + ', ' + FirstName);
+
+--CHAPTER 6
+--EXERCISE 1 - Write a SELECT statement that returns the same result set as this SELECT 
+--statement, but don’t use a join. Instead, use a subquery in a WHERE clause that uses 
+--the IN keyword
+SELECT DISTINCT LastName, FirstName
+FROM Instructors i
+ JOIN Courses c
+ ON i.InstructorID = c.InstructorID
+ORDER BY LastName, FirstName
+
