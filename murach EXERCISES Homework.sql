@@ -163,7 +163,8 @@ SELECT S.StudentID, SUM(CourseUnits) AS StudentUnits
   ORDER BY StudentUnits DESC;
 
 --EXERCISE 6 - Modify the solution to exercise 5 so it only includes students who haven’t graduated 
---and who are taking more than nine units.SELECT S.StudentID, SUM(CourseUnits) AS StudentUnits
+--and who are taking more than nine units.
+SELECT S.StudentID, SUM(CourseUnits) AS StudentUnits
   FROM Students S
   JOIN StudentCourses SC ON S.StudentID = SC.StudentID
   JOIN Courses C ON SC.CourseID = C.CourseID
