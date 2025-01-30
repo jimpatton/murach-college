@@ -187,7 +187,62 @@ SELECT S.StudentID, SUM(CourseUnits) AS StudentUnits
 --the IN keyword
 SELECT DISTINCT LastName, FirstName
 FROM Instructors i
- JOIN Courses c
- ON i.InstructorID = c.InstructorID
-ORDER BY LastName, FirstName
+ WHERE InstructorID IN
+   (SELECT DISTINCT InstructorID
+      FROM Courses)
+ORDER BY LastName, FirstName;
 
+--EXERCISE 2 - Write a SELECT statement that answers this question: Which instructors have an
+--annual salary that’s greater than the average annual salary for all instructors?
+--Return the LastName, FirstName, and AnnualSalary columns for each Instructor.
+--Sort the result set by the AnnualSalary column in descending sequence.
+SELECT LastName, FirstName, AnnualSalary
+  FROM Instructors
+  WHERE AnnualSalary > 
+    (SELECT AVG(AnnualSalary)
+	  FROM Instructors)
+ORDER by AnnualSalary DESC;
+
+--EXERCISE 3 - Write a SELECT statement that returns the LastName and FirstName columns from 
+--the Instructors table.
+--Return one row for each instructor who doesn’t have any courses in the Courses table. 
+--To do that, use a subquery with the NOT EXISTS operator
+SELECT LastName, FirstName
+  FROM Instructors I
+  WHERE NOT EXISTS
+   (SELECT *
+     FROM Courses C
+	 WHERE C.InstructorID = I.InstructorID)
+ORDER BY LastName, FirstName;
+
+
+--EXERCISE 4 - Write a SELECT statement that returns the LastName and FirstName columns from the Students table, 
+--along with a count of the number of courses each student is taking from the StudentCourses table.
+--Return one row for each student who is taking more than one class. 
+--To do that, use a subquery with the IN operator that groups the student course by StudentID
+
+SELECT LastName, FirstName, COUNT(*) AS NumberOfCourses
+  FROM Students S
+  JOIN StudentCourses SC ON s.StudentID = sc.StudentID
+  WHere sc.StudentID IN
+    (SELECT StudentID
+	   FROM StudentCourses SC
+	   JOIN Courses C ON sc.CourseID = c.CourseID
+	   GROUP BY StudentID
+	   HAVING COUNT(*) >1)
+Group BY LastName, FirstName
+ORDER BY LastName, FirstName;
+
+--EXERCISE 5 - Write a SELECT statement that returns the LastName, FirstName, and AnnualSalary columns
+--of each instructor who has a unique annual salary. 
+--In other words, don’t include instructors who have the same annual salary as another instructor.
+--Sort the results by LastName and then by FirstName
+
+SELECT LastName, FirstName, AnnualSalary
+  FROM Instructors 
+  WHERE AnnualSalary NOT IN
+    (SELECT AnnualSalary
+	  FROM Instructors
+	  GROUP BY AnnualSalary
+	  HAVING Count(AnnualSalary) >1)
+ORDER BY LastName, FirstName;
